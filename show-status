@@ -124,7 +124,7 @@ if openssl verify -CAfile "$CA_CRT" "$CA_CRT" >/dev/null 2>&1; then
         exit 2
     fi
 
-    rootCA=1 #signes itself
+    rootCA=1 #signs itself
 else
     echo -e "$SUCC SignCA directory (found signed CA)"
     rootCA=0
