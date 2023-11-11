@@ -77,7 +77,7 @@ fi
 
 
 SAN=$(openssl x509 -noout -in "$CA_DIR_PATH/$SHORT_NAME.crt" -ext subjectAltName)
-SAN=$(grep -vP '^X509v3 Subject Alternative Name:\s*$' <<< "$SAN" | sed -e 's/^[[:space:]]*//')
+SAN=$(grep -vE '^X509v3 Subject Alternative Name:\s*$' <<< "$SAN" | sed -e 's/^[[:space:]]*//')
 if [ -z "$SAN" ]; then
     echo -e "$ERR Can not retrieve Subject Alternative Name, exiting."
     exit 1

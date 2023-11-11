@@ -63,8 +63,8 @@ echo -e "$NOTE Verifying certificate request ..."
 openssl req -text -noout -verify -in "$CSR_PATH"
 
 CSR_SUBJ=$(openssl req -utf8 -in "$CSR_PATH" -noout -subject -nameopt multiline)
-CSR_CERT_CN=$(echo "$CSR_SUBJ" | grep -P '^\s+commonName' | cut -d '=' -f 2- | sed -e 's/^[[:space:]]*//') || true
-CSR_CERT_MAIL=$(echo "$CSR_SUBJ" | grep -P '^\s+emailAddress' | cut -d '=' -f 2- | sed -e 's/^[[:space:]]*//') || true
+CSR_CERT_CN=$(echo "$CSR_SUBJ" | grep -E '^\s+commonName' | cut -d '=' -f 2- | sed -e 's/^[[:space:]]*//') || true
+CSR_CERT_MAIL=$(echo "$CSR_SUBJ" | grep -E '^\s+emailAddress' | cut -d '=' -f 2- | sed -e 's/^[[:space:]]*//') || true
 if [ -z "$CSR_CERT_CN" ]; then
     echo -e "$ERR No name supplied in request, exiting."
     exit 1

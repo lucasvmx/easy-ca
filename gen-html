@@ -66,7 +66,7 @@ CA_HTML_UPDATED=$(date -R)
 if openssl verify -CAfile ca/ca.crt ca/ca.crt >/dev/null 2>&1; then
     echo -e "$NOTE Creating index.html for root CA"
 
-    CA_HTML_ROOT_TITLE=$(openssl x509 -noout -subject -in ca/ca.crt -nameopt multiline | grep -P '^\s+commonName' | cut -d "=" -f 2-)
+    CA_HTML_ROOT_TITLE=$(openssl x509 -noout -subject -in ca/ca.crt -nameopt multiline | grep -E '^\s+commonName' | cut -d "=" -f 2-)
     # shellcheck disable=SC2001
     CA_HTML_ROOT_NAME=$(echo "$CA_HTML_ROOT_TITLE" | sed 's/\s\+/_/g')
     CA_HTML_ROOT_HASH=$(openssl x509 -noout -fingerprint -sha1 -in ca/ca.crt | cut -d '=' -f 2-)
@@ -74,7 +74,7 @@ if openssl verify -CAfile ca/ca.crt ca/ca.crt >/dev/null 2>&1; then
     CA_HTML_ROOT_VALID_UNTIL=${CA_HTML_ROOT_VALID_UNTIL:9}
 
     # shellcheck disable=SC2034
-    CA_HTML_ROOT_REVOKED=$(openssl crl -in ca/ca.crl -text -noout | grep -cP '^\s+Revocation Date:') || true
+    CA_HTML_ROOT_REVOKED=$(openssl crl -in ca/ca.crl -text -noout | grep -cE '^\s+Revocation Date:') || true
 
     template "${BIN_DIR}/templates/root_index.tpl" "$HTMLDIR/index.html"
 
@@ -90,7 +90,7 @@ if openssl verify -CAfile ca/ca.crt ca/ca.crt >/dev/null 2>&1; then
 else
     echo -e "$NOTE Creating index.html for sign CA"
 
-    CA_HTML_ROOT_TITLE=$(openssl x509 -noout -subject -in ca/root.crt -nameopt multiline | grep -P '^\s+commonName' | cut -d "=" -f 2-)
+    CA_HTML_ROOT_TITLE=$(openssl x509 -noout -subject -in ca/root.crt -nameopt multiline | grep -E '^\s+commonName' | cut -d "=" -f 2-)
     # shellcheck disable=SC2001
     CA_HTML_ROOT_NAME=$(echo "$CA_HTML_ROOT_TITLE" | sed 's/\s\+/_/g')
     # shellcheck disable=SC2034
@@ -98,7 +98,7 @@ else
     CA_HTML_ROOT_VALID_UNTIL=$(openssl x509 -noout -in ca/root.crt -enddate) # ignore notAfter=
     CA_HTML_ROOT_VALID_UNTIL=${CA_HTML_ROOT_VALID_UNTIL:9}
 
-    CA_HTML_SIGN_TITLE=$(openssl x509 -noout -subject -in ca/ca.crt -nameopt multiline | grep -P '^\s+commonName' | cut -d "=" -f 2-)
+    CA_HTML_SIGN_TITLE=$(openssl x509 -noout -subject -in ca/ca.crt -nameopt multiline | grep -E '^\s+commonName' | cut -d "=" -f 2-)
     # shellcheck disable=SC2001
     CA_HTML_SIGN_NAME=$(echo "$CA_HTML_SIGN_TITLE" | sed 's/\s\+/_/g')
     # shellcheck disable=SC2034
@@ -107,7 +107,7 @@ else
     CA_HTML_SIGN_VALID_UNTIL=${CA_HTML_SIGN_VALID_UNTIL:9}
 
     # shellcheck disable=SC2034
-    CA_HTML_SIGN_REVOKED=$(openssl crl -in ca/ca.crl -text -noout | grep -cP '^\s+Revocation Date:') || true
+    CA_HTML_SIGN_REVOKED=$(openssl crl -in ca/ca.crl -text -noout | grep -cE '^\s+Revocation Date:') || true
 
     template "${BIN_DIR}/templates/sign_index.tpl" "$HTMLDIR/index.html"
 

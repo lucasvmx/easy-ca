@@ -158,10 +158,10 @@ if ! openssl crl -in "$ROOT_DIR/ca/ca.crl" -CAfile "$CA_CRT" >/dev/null 2>&1; th
     exit 2
 fi
 
-if [ "$(openssl crl -in "$ROOT_DIR/ca/ca.crl" -text -noout | grep -cP '^No Revoked Certificates.')" -eq 1 ]; then
+if [ "$(openssl crl -in "$ROOT_DIR/ca/ca.crl" -text -noout | grep -cE '^No Revoked Certificates.')" -eq 1 ]; then
     revoked_certs=0
 else
-    revoked_certs=$(openssl crl -in "$ROOT_DIR/ca/ca.crl" -text -noout | grep -cP '^\s+Revocation Date:')
+    revoked_certs=$(openssl crl -in "$ROOT_DIR/ca/ca.crl" -text -noout | grep -cE '^\s+Revocation Date:')
 fi
 echo -e "$NOTE     Revoked Certificates        $revoked_certs"
 
@@ -205,7 +205,7 @@ if [ $certs -gt 0 ]; then
 
             pem_file="$ROOT_DIR/ca/archive/$ca_number.pem"
 
-            ca_cname=$(openssl x509 -noout -subject -in "$pem_file" -nameopt multiline | grep -P '^\s+commonName' | cut -d '=' -f 2-)
+            ca_cname=$(openssl x509 -noout -subject -in "$pem_file" -nameopt multiline | grep -E '^\s+commonName' | cut -d '=' -f 2-)
 
             server_cert=$(openssl x509 -noout -in "$pem_file" -ext extendedKeyUsage | grep -c 'TLS Web Server Authentication') || true
             sign_cert=$(openssl x509 -noout -in "$pem_file" -ext keyUsage | grep -c 'Certificate Sign') || true
@@ -214,7 +214,7 @@ if [ $certs -gt 0 ]; then
             valid_until=$(openssl x509 -noout -in "$pem_file" -enddate) # ignore notAfter=
             bits=$(openssl x509 -noout -in "$pem_file" -text -certopt no_header,no_aux,no_extensions,no_version,no_serial,no_issuer,no_validity,no_subject,no_signame,no_sigdump | grep 'Public-Key:' | cut -d ':' -f2 | tr -d "()")
             subjectAltName=$(openssl x509 -noout -in "$pem_file" -ext subjectAltName)
-            subjectAltName=$(grep -vP '^X509v3 Subject Alternative Name:\s*$' <<< "$subjectAltName" | sed -e 's/^[[:space:]]*//')
+            subjectAltName=$(grep -vE '^X509v3 Subject Alternative Name:\s*$' <<< "$subjectAltName" | sed -e 's/^[[:space:]]*//')
 
             if [ "$server_cert" -ge 1 ]; then
                 type="server"
