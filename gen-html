@@ -20,7 +20,7 @@ source "${BIN_DIR}/defaults.conf"
 usage() {
     echo "Usage: $0 [-f]"
     echo "    Create a shareable html directory, containing root and signing"
-    echo "    certificates as well as the certificate revokation list"
+    echo "    certificates as well as the certificate revocation list"
     echo
     echo "Options:"
     echo "    -f       Override existing html directory"
