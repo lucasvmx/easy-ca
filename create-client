@@ -124,4 +124,12 @@ unset CA_PASS
 
 trap - 0 2
 
+echo -e "$NOTE Generating .p12 ..."
+
+openssl pkcs12 -export \
+    -in certs/clients/$SAFE_NAME/$SAFE_NAME.crt \
+    -inkey certs/clients/$SAFE_NAME/$SAFE_NAME.key \
+    -certfile ca/ca.crt \
+    -out certs/clients/$SAFE_NAME/$SAFE_NAME.p12
+    
 echo -e "$SUCC Client certificate for '${CLIENT_NAME}' created."
